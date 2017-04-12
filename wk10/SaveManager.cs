@@ -25,7 +25,7 @@ public class SaveManager : MonoBehaviour  {
 		eventState = new List<bool> { false, true, false };
 		position = new Vector3 (10, 30, 60);
 
-		_Save ();
+		//_Save ();
 
 		_Load ();
 	}
