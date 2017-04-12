@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// XGL S17 Wk10
+
+// This has been adjusted to have a faster rotate speed,
+// as well as use raycasting in order to make the camera not get stuck behind walls.
+
 public class XGL_CamFollow10 : MonoBehaviour {
 
 
@@ -73,14 +79,27 @@ public class XGL_CamFollow10 : MonoBehaviour {
 		// Rotate the transform of the camera to view the player
 		transform.LookAt (playerTransform);
 
-		Debug.DrawRay (playerTransform.position,transform.position-playerTransform.position);
+		// If you uncomment this, it draws a ray in the Scene View for debugging
+		//Debug.DrawRay (playerTransform.position,transform.position-playerTransform.position,Color.red);
 
+
+		// Stores information about the raycast we are about to perform
 		RaycastHit hit = new RaycastHit();
+
+
+		// Origin at the player, points towards the camera
 		Ray ray = new Ray (playerTransform.position, transform.position - playerTransform.position);
 
-		if (Physics.Raycast (ray,out hit,offset.magnitude)) {
+		// If the raycast hits, move the camera to where the ray hit some collider
+		// << is the bit shifting operator (e.g., 1<<2 means that 1 in binary becomes 100)
+		if (Physics.Raycast (ray,out hit,offset.magnitude,1<<0)) {
 			transform.position = hit.point;
 		}
+
+		// Bitshifting example
+		// 11b = 3 (base 10)
+		// 11b << 1 = 110b
+		// 3 << 1 = 6
 
 
 	}

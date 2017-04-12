@@ -12,30 +12,39 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System;
 
 
+// This is a script with two classes, SaveManager and SaveData
+// You can modify it for use in your game.
+// SaveManager contains functions for saving and loading data, using the Serializable
+//		SaveData class as the data to be saved.
+
 public class SaveManager : MonoBehaviour  {
 
-	// This just tests the saving and loading
+	// Test() just tests the saving and loading
 	// These functions are static because you want to be able to call functions in the
 	// SaveManager script without attaching it to a gameobject.
 	static public void Test() {
 
-		gold = 10;
-		beatGame = true;
-		playerName = "Sean 谷";
-		eventState = new List<bool> { false, true, false };
-		position = new Vector3 (10, 30, 60);
 
-		//_Save ();
+		gold = 20;
+		beatGame = true;
+		playerName = "Sen 谷";
+		eventState = new List<bool> { true, true, false };
+		position = new Vector3 (15, 30, 60);
+
+
+		_Save ();
 
 		_Load ();
 	}
 
-	static void _Save() {
+	static public void _Save() {
 
 		// File.Create() makes an empty save file.
 		// A FileStream manages an open file (which is able to be written to)
 		// Application.per... is a location on the player's computer where it's safe to save data.
 		FileStream file = File.Create (Application.persistentDataPath + "/save.txt");
+
+		// /home/sean/Documents/file.txt is a path (forexample)
 
 		// Create an instance of SaveData, fill out its properties.
 		SaveData data = new SaveData ();
@@ -55,7 +64,7 @@ public class SaveManager : MonoBehaviour  {
 
 	}
 
-	static void _Load() {
+	static public void _Load() {
 
 		// Basically the same as _SavE() but backwards.
 		BinaryFormatter bf = new BinaryFormatter ();
@@ -70,6 +79,7 @@ public class SaveManager : MonoBehaviour  {
 		position = data.position.toVector3 ();
 
 		// Verify the data was written
+		// You can delete this, it doesn't matter.
 		print (beatGame);
 		print (position); 
 		print (gold);
@@ -77,12 +87,15 @@ public class SaveManager : MonoBehaviour  {
 		foreach (bool b in eventState) {
 			print (b); 
 		}
+
 	}
 
 	// Q: Why do we have the same variables here as in the SaveData class below?
 	// A: Because these variables are what we actually modify with other game code - they're
 	// 	what other code should reference when figuring things out. The varaibles in the SaveData
 	//	class are just for when you need to save all this to a file.
+
+	// Like if you want to edit the gold in your game, you'd do SaveManager.gold = 100 or something
 	static public Vector3 position;
 	static public int gold;
 	static public bool beatGame;
@@ -107,6 +120,9 @@ class SaveData {
 	public SaveVector3 position;
 	public List<bool> eventState = null;
 }
+
+
+// ~Intermediate Difficulty~
 
 // Because Vector3 is specific to Unity it can't be saved automatically... therefore
 // we need to make this extra class.

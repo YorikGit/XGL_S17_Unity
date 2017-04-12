@@ -5,6 +5,14 @@ using UnityEngine.SceneManagement;
 
 // VERSION: S17 WK10
 
+// This has been updated to use maxJumpTime to limit the jump height of the player
+// It also uses raycasts to limit the jump height
+
+//It also adds functionality for checking for falling out of bounds and restting the player
+
+// there is also some 'game feel' code that limits the max velocity of the player (so you don't
+// fly all over the place), and so jumping feels a little better.
+
 public class XGL_Controller10 : MonoBehaviour {
 
 	// Use this for initialization
@@ -48,6 +56,9 @@ public class XGL_Controller10 : MonoBehaviour {
 				rb.AddForce (0, jumpSpeed, 0);
 			}
 		}
+
+		// Cast a ray down from the player to check if the player is near the ground (and thus
+		//	allowed to jump again) 
 		bool touchingGround = false;
 		if (Physics.Raycast (new Ray(transform.position,Vector3.down),0.1f+_collider.bounds.extents.y)) {
 			timerJump = 0f;
@@ -84,13 +95,20 @@ public class XGL_Controller10 : MonoBehaviour {
 			upOrDownHeld = false;
 		}
 
+		// This code makes jumping feel better
 		if (upOrDownHeld == false && rightOrLeftHeld == false && !Input.GetButton ("Jump")) {
-			
+
+			// Basically, not holding keys down makes drag higher, so you slow down faster
+			// But I also add a negative y-force to the player so the drag doesn't make you 
+			// fall downwards slower.
 			rb.drag = 1.5f;
 			if (!touchingGround) {
 				rb.AddForce (0,-10f,0);
 			}
 		} else {
+
+			// If keys are held, and you aren't on the ground, and the jump timer has 'expired'
+			// then more force should make you hit the ground faster
 			rb.drag = 0.1f;
 			if (!touchingGround) {
 				rb.AddForce (0,-5f,0);
@@ -101,13 +119,15 @@ public class XGL_Controller10 : MonoBehaviour {
 		}
 
 
+		// Limit Velocity of the player
 		Vector3 vel = rb.velocity;
 		if (rb.velocity.y > 5f) {
 			vel.y = 5f;
 		}
 
 		float maxHor = 8f;
-		vel.x= Mathf.Clamp (rb.velocity.x,-maxHor,maxHor);
+		// E.g. - Mathf.Clamp(-5,0,5) will return 0, because -5 is less than the minimum value, 0
+		vel.x = Mathf.Clamp (rb.velocity.x,-maxHor,maxHor);
 		vel.z = Mathf.Clamp (rb.velocity.z, -maxHor, maxHor);
 		rb.velocity = vel;
 
